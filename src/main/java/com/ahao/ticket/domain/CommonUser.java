@@ -12,7 +12,7 @@ import lombok.Data;
  * 
  * @TableName common_user
  */
-@TableName(value ="tic_common_user")
+@TableName(value ="tic_user")
 @Data
 public class CommonUser implements Serializable {
     /**
