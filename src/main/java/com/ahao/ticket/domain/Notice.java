@@ -5,13 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 /**
  * 
  * @TableName notice
  */
-@TableName(value ="notice")
+@TableName(value ="tic_notice")
 @Data
 public class Notice implements Serializable {
     /**
@@ -34,6 +36,16 @@ public class Notice implements Serializable {
      * 发布的管理员id
      */
     private Integer managerId;
+
+    /**
+     * 发布时间
+     */
+    private Date showtime;
+
+    /**
+     * 状态
+     */
+    private Integer statu;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

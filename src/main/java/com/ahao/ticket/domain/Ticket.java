@@ -12,7 +12,7 @@ import lombok.Data;
  * 
  * @TableName ticket
  */
-@TableName(value ="ticket")
+@TableName(value ="tic_ticket")
 @Data
 public class Ticket implements Serializable {
     /**

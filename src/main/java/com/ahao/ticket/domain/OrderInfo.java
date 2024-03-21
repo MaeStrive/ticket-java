@@ -13,7 +13,7 @@ import lombok.Data;
  * 
  * @TableName order_info
  */
-@TableName(value ="order_info")
+@TableName(value ="tic_order_info")
 @Data
 public class OrderInfo implements Serializable {
     /**
