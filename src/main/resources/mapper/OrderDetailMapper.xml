@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahao.ticket.mapper.OrderDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.ahao.ticket.domain.OrderDetail">
+            <id property="id" column="Id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+            <result property="ticketId" column="ticket_id" jdbcType="INTEGER"/>
+            <result property="amount" column="amount" jdbcType="INTEGER"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        Id,user_id,order_id,
+        ticket_id,amount,price
+    </sql>
+</mapper>
