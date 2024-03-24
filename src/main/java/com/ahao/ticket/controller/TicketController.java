@@ -70,4 +70,10 @@ public class TicketController {
         }
         return Result.ok(ticketIndexVOS);
     }
+
+    @GetMapping("/getTicketById")
+    public Result<?> getTicketById(Integer id){
+        Ticket byId = ticketService.getById(id);
+        return Result.ok(byId);
+    }
 }

@@ -64,6 +64,8 @@ public class Ticket implements Serializable {
 
     private String district;
 
+    private String detail;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
