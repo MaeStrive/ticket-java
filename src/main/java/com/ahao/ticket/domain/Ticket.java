@@ -66,6 +66,12 @@ public class Ticket implements Serializable {
 
     private String detail;
 
+    /**
+     *
+     * 票的数量
+     */
+    private String count;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

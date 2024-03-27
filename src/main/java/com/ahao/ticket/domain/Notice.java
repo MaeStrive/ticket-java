@@ -45,7 +45,7 @@ public class Notice implements Serializable {
     /**
      * 状态
      */
-    private Integer statu;
+    private Integer status;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

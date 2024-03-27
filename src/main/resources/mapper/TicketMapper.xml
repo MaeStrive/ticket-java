@@ -13,7 +13,10 @@
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
             <result property="imgPath" column="img_path" jdbcType="VARCHAR"/>
-            <result property="limit" column="limit" jdbcType="INTEGER"/>
+            <result property="detail" column="detail" jdbcType="VARCHAR"/>
+            <result property="district" column="district" jdbcType="VARCHAR"/>
+            <result property="orderLimit" column="order_limit" jdbcType="VARCHAR"/>
+            <result property="count" column="count" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -21,4 +24,9 @@
         showTime,address,status,
         category_id,img_path,limit
     </sql>
+    <select id="listAllDistinct" resultType="com.ahao.ticket.domain.Ticket">
+        select
+            DISTINCT(district)
+        from tic_ticket
+    </select>
 </mapper>

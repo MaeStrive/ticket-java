@@ -2,6 +2,7 @@ package com.ahao.ticket.controller;
 
 import com.ahao.ticket.domain.Category;
 import com.ahao.ticket.domain.Ticket;
+import com.ahao.ticket.mapper.TicketMapper;
 import com.ahao.ticket.service.CategoryService;
 import com.ahao.ticket.service.TicketService;
 import com.ahao.ticket.utils.Result;
@@ -28,6 +29,8 @@ public class TicketController {
     private TicketService ticketService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private TicketMapper ticketMapper;
 
     /**
      * 获取分类下的产品
@@ -38,6 +41,28 @@ public class TicketController {
     public Result<?> listTicketIndex(Integer categoryId) {
         List<Ticket> tickets = ticketService.listByCategoryId(categoryId);
         return Result.ok(tickets);
+    }
+
+    /***
+     * 根据地区获取产品
+     */
+    @GetMapping("/listTicketByDistinct")
+    public Result<?> listTicketByDistinct(String distinct) {
+        LambdaQueryWrapper<Ticket> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Ticket::getDistrict, distinct);
+        List<Ticket> list = ticketService.list(queryWrapper);
+        return Result.ok(list);
+    }
+
+    /**
+     * 获取所有的地区
+     *
+     * @return
+     */
+    @GetMapping("/listAllDisctinct")
+    public Result<?> listAllDistinct() {
+        List<Ticket> list = ticketMapper.listAllDistinct();
+        return Result.ok(list);
     }
 
     /**
@@ -72,7 +97,7 @@ public class TicketController {
     }
 
     @GetMapping("/getTicketById")
-    public Result<?> getTicketById(Integer id){
+    public Result<?> getTicketById(Integer id) {
         Ticket byId = ticketService.getById(id);
         return Result.ok(byId);
     }
