@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import cn.hutool.core.util.IdUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -42,42 +43,38 @@ public class OrderInfoController {
     public Result<?> saveOder(@RequestBody OrderDTO orderDTO) {
         //再次判断查询票的数量是否够？ 不够我不卖
         Ticket ticket = ticketService.getById(orderDTO.getTicketId());
-        String count = ticket.getCount();
-        String[] countArr = count.split(",");
-        List<OrderDetail> details = orderDTO.getDetails();
-        for (int i = 0; i < countArr.length; i++) {
-            OrderDetail orderDetail = details.get(i);
-            if (orderDetail.getAmount() > Integer.parseInt(countArr[i])) {
-                return Result.error("票不够了！");
+        String[] priceArr = ticket.getPrice().split(",");
+        String[] countArr = ticket.getCount().split(",");
+        for (int i = 0; i < priceArr.length; i++) {
+            if (orderDTO.getPrice().equals(new BigDecimal(priceArr[i]))) {
+                if (orderDTO.getAmount() > Integer.parseInt(countArr[i])) {
+                    return Result.error("票不够了！");
+                } else {
+                    countArr[i] = String.valueOf(Integer.parseInt(countArr[i]) - orderDTO.getAmount());
+                }
             }
+
         }
         //保存订单
-        CommonUser current = RequestUtil.getCurrent();
-        if (current == null) return Result.error("请先登录!");
         String s = IdUtil.getSnowflake().nextIdStr();
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setCode(s);
         orderInfo.setStatus("待支付");
         orderInfo.setCreateTime(new Date());
-        orderInfo.setUserId(current.getId());
+        orderInfo.setUserId(orderDTO.getUserId());
         orderInfo.setPrice(orderDTO.getTotal());
         orderInfoService.save(orderInfo);
         //保存订单项
-        String[] countArrNew = new String[details.size()];
-        for (int i = 0; i < details.size(); i++) {
-            OrderDetail od = details.get(i);
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setUserId(current.getId());
-            orderDetail.setPrice(od.getPrice());
-            orderDetail.setAmount(od.getAmount());
-            orderDetail.setTicketId(orderDTO.getTicketId());
-            orderDetail.setOrderId(orderInfo.getId());
-            orderDetailService.save(orderDetail);
-            //将票的数量减了
-            countArrNew[i] = String.valueOf(Integer.parseInt(countArr[i]) - od.getAmount());
-        }
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setUserId(orderDTO.getUserId());
+        orderDetail.setPrice(orderDTO.getPrice());
+        orderDetail.setAmount(orderDTO.getAmount());
+        orderDetail.setTicketId(orderDTO.getTicketId());
+        orderDetail.setOrderId(orderInfo.getId());
+        orderDetailService.save(orderDetail);
+        //将票的数量减了
         //更新票的数量
-        String countNew = String.join(",", countArrNew);
+        String countNew = String.join(",", countArr);
         LambdaUpdateWrapper<Ticket> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Ticket::getId, orderDTO.getTicketId()).set(Ticket::getCount, countNew);
         ticketService.update(updateWrapper);

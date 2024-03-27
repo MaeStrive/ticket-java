@@ -8,7 +8,9 @@ import java.util.List;
 
 @Data
 public class OrderDTO {
-    List<OrderDetail> details;
+    private BigDecimal price;
+    private Integer amount;
     private BigDecimal total;
     private Integer ticketId;
+    private Integer userId;
 }

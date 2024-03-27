@@ -36,6 +36,7 @@ public class Ticket implements Serializable {
      * 演出时间
      */
     private Date showtime;
+    private Date createtime;
 
     /**
      * 演出地点
@@ -71,6 +72,8 @@ public class Ticket implements Serializable {
      * 票的数量
      */
     private String count;
+
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

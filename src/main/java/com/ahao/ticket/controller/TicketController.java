@@ -6,6 +6,8 @@ import com.ahao.ticket.mapper.TicketMapper;
 import com.ahao.ticket.service.CategoryService;
 import com.ahao.ticket.service.TicketService;
 import com.ahao.ticket.utils.Result;
+import com.ahao.ticket.vo.PriceVO;
+import com.ahao.ticket.vo.TicketDetailVO;
 import com.ahao.ticket.vo.TicketIndexVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +101,18 @@ public class TicketController {
     @GetMapping("/getTicketById")
     public Result<?> getTicketById(Integer id) {
         Ticket byId = ticketService.getById(id);
-        return Result.ok(byId);
+        String[] price = byId.getPrice().split(",");
+        String[] count = byId.getCount().split(",");
+        TicketDetailVO ticketDetailVO = new TicketDetailVO();
+        List<PriceVO> priceVOList = new LinkedList<>();
+        for (int i = 0; i < price.length; i++) {
+            PriceVO priceVO = new PriceVO();
+            priceVO.setCount(count[i]);
+            priceVO.setPrice(price[i]);
+            priceVOList.add(priceVO);
+        }
+        ticketDetailVO.setTicket(byId);
+        ticketDetailVO.setPriceVOList(priceVOList);
+        return Result.ok(ticketDetailVO);
     }
 }
