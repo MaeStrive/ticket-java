@@ -2,6 +2,7 @@ package com.ahao.ticket.controller;
 
 import com.ahao.ticket.domain.Category;
 import com.ahao.ticket.domain.Ticket;
+import com.ahao.ticket.dto.TicketDTO;
 import com.ahao.ticket.mapper.TicketMapper;
 import com.ahao.ticket.service.CategoryService;
 import com.ahao.ticket.service.TicketService;
@@ -114,5 +115,32 @@ public class TicketController {
         ticketDetailVO.setTicket(byId);
         ticketDetailVO.setPriceVOList(priceVOList);
         return Result.ok(ticketDetailVO);
+    }
+
+    @GetMapping("/listTicketByCondition")
+    public Result<?> listTicketByCondition(TicketDTO ticketDTO) {
+        LambdaQueryWrapper<Ticket> queryWrapper = new LambdaQueryWrapper<>();
+        if (ticketDTO.getCategoryId() != 0) {
+            queryWrapper.eq(Ticket::getCategoryId, ticketDTO.getCategoryId());
+        }
+        if (!ticketDTO.getDistrict().equals("全部")) {
+            queryWrapper.eq(Ticket::getDistrict, ticketDTO.getDistrict());
+        }
+        if (ticketDTO.getType() == 1) {
+            queryWrapper.orderByAsc(Ticket::getShowtime);
+        } else if (ticketDTO.getType() == 0) {
+            queryWrapper.orderByAsc(Ticket::getId);
+        } else if (ticketDTO.getType() == 2) {
+            //TODO 创建时间
+        }
+
+        List<Ticket> list = ticketService.list(queryWrapper);
+        return Result.ok(list);
+    }
+
+    @GetMapping("/listYouMayLike")
+    public Result<?> listYouMayLike(Integer ticketId) {
+        List<Ticket> list = ticketMapper.listYouMayLike(ticketId);
+        return Result.ok(list);
     }
 }
