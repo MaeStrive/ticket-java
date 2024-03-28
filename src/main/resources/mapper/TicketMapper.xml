@@ -32,6 +32,9 @@
     <select id="listYouMayLike" resultType="com.ahao.ticket.domain.Ticket">
         SELECT * FROM tic_ticket WHERE id != #{ticketId} ORDER BY RAND() LIMIT 6
     </select>
+    <select id="listYouMayLike00" resultType="com.ahao.ticket.domain.Ticket">
+        SELECT * FROM tic_ticket  ORDER BY RAND() LIMIT 2
+    </select>
 
 
 </mapper>

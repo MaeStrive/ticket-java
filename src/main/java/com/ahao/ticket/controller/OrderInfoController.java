@@ -87,11 +87,10 @@ public class OrderInfoController {
      * @return
      */
     @GetMapping("/listOrders")
-    public Result<?> listOrders() {
+    public Result<?> listOrders(Integer userId) {
         CommonUser current = RequestUtil.getCurrent();
-        if (current == null) return Result.error("请先登录!");
         LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(OrderInfo::getUserId, current.getId());
+        queryWrapper.eq(OrderInfo::getUserId, userId);
         List<OrderInfo> list = orderInfoService.list(queryWrapper);
         return Result.ok(list);
     }
@@ -118,8 +117,10 @@ public class OrderInfoController {
      */
     @PostMapping("/updateOrderStatus")
     public Result<?> updateOrderStatus(@RequestBody OrderInfo orderInfo) {
+        System.out.println(orderInfo);
         LambdaUpdateWrapper<OrderInfo> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(OrderInfo::getId, orderInfo.getStatus()).set(OrderInfo::getStatus, orderInfo.getStatus());
+        updateWrapper.eq(OrderInfo::getId, orderInfo.getId()).set(OrderInfo::getStatus, orderInfo.getStatus());
+        orderInfoService.update(updateWrapper);
         return Result.ok();
     }
 

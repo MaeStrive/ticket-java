@@ -14,6 +14,7 @@ public interface TicketMapper extends BaseMapper<Ticket> {
     List<Ticket> listAllDistinct();
 
     List<Ticket> listYouMayLike(@Param("ticketId")Integer ticketId);
+    List<Ticket> listYouMayLike00();
 }
 
 

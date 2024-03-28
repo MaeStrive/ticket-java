@@ -40,7 +40,7 @@ public class Notice implements Serializable {
     /**
      * 发布时间
      */
-    private Date showtime;
+    private Date createTime;
 
     /**
      * 状态

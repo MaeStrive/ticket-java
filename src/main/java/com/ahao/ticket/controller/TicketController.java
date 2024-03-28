@@ -7,6 +7,7 @@ import com.ahao.ticket.mapper.TicketMapper;
 import com.ahao.ticket.service.CategoryService;
 import com.ahao.ticket.service.TicketService;
 import com.ahao.ticket.utils.Result;
+import com.ahao.ticket.vo.ListTicketVO;
 import com.ahao.ticket.vo.PriceVO;
 import com.ahao.ticket.vo.TicketDetailVO;
 import com.ahao.ticket.vo.TicketIndexVO;
@@ -126,21 +127,42 @@ public class TicketController {
         if (!ticketDTO.getDistrict().equals("全部")) {
             queryWrapper.eq(Ticket::getDistrict, ticketDTO.getDistrict());
         }
-        if (ticketDTO.getType() == 1) {
-            queryWrapper.orderByAsc(Ticket::getShowtime);
-        } else if (ticketDTO.getType() == 0) {
-            queryWrapper.orderByAsc(Ticket::getId);
-        } else if (ticketDTO.getType() == 2) {
-            //TODO 创建时间
+        ListTicketVO result = new ListTicketVO();
+        for (int i = 0; i < 3; i++) {
+            LambdaQueryWrapper<Ticket> queryWrapper1 = new LambdaQueryWrapper<>();
+            if (i == 0) {
+                queryWrapper1 = queryWrapper;
+                List<Ticket> list = ticketService.list(queryWrapper1);
+                result.setList0(list);
+            }
+            if (i == 1) {
+                queryWrapper1 = queryWrapper;
+                queryWrapper1.orderByAsc(Ticket::getShowtime);
+
+                List<Ticket> list = ticketService.list(queryWrapper1);
+                result.setList1(list);
+
+            }
+            if (i == 2) {
+                queryWrapper1 = queryWrapper;
+                queryWrapper1.orderByAsc(Ticket::getCreatetime);
+                List<Ticket> list = ticketService.list(queryWrapper1);
+                result.setList2(list);
+            }
         }
 
-        List<Ticket> list = ticketService.list(queryWrapper);
+        return Result.ok(result);
+    }
+
+    @GetMapping("/listRecommend")
+    public Result<?> listRecommend(Integer ticketId) {
+        List<Ticket> list = ticketMapper.listYouMayLike(ticketId);
         return Result.ok(list);
     }
 
-    @GetMapping("/listYouMayLike")
-    public Result<?> listYouMayLike(Integer ticketId) {
-        List<Ticket> list = ticketMapper.listYouMayLike(ticketId);
+    @GetMapping("/listLike")
+    public Result<?> listLike() {
+        List<Ticket> list = ticketMapper.listYouMayLike00();
         return Result.ok(list);
     }
 }
