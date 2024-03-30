@@ -18,6 +18,6 @@ public class VirtualConf implements WebMvcConfigurer {
     private String imgPath;
     @Override //上传图片后，图片的地址映射
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/file/**").addResourceLocations("file:"+imgPath);
+        registry.addResourceHandler("/dev-api/profile/**").addResourceLocations("file:"+imgPath);
     }
 }
