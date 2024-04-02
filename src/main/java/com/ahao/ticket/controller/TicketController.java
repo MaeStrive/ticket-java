@@ -121,35 +121,30 @@ public class TicketController {
     @GetMapping("/listTicketByCondition")
     public Result<?> listTicketByCondition(TicketDTO ticketDTO) {
         LambdaQueryWrapper<Ticket> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<Ticket> queryWrapper1 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<Ticket> queryWrapper2 = new LambdaQueryWrapper<>();
         if (ticketDTO.getCategoryId() != 0) {
             queryWrapper.eq(Ticket::getCategoryId, ticketDTO.getCategoryId());
+            queryWrapper1.eq(Ticket::getCategoryId, ticketDTO.getCategoryId());
+            queryWrapper2.eq(Ticket::getCategoryId, ticketDTO.getCategoryId());
         }
         if (!ticketDTO.getDistrict().equals("全部")) {
             queryWrapper.eq(Ticket::getDistrict, ticketDTO.getDistrict());
+            queryWrapper1.eq(Ticket::getDistrict, ticketDTO.getDistrict());
+            queryWrapper2.eq(Ticket::getDistrict, ticketDTO.getDistrict());
         }
         ListTicketVO result = new ListTicketVO();
-        for (int i = 0; i < 3; i++) {
-            LambdaQueryWrapper<Ticket> queryWrapper1 = new LambdaQueryWrapper<>();
-            if (i == 0) {
-                queryWrapper1 = queryWrapper;
-                List<Ticket> list = ticketService.list(queryWrapper1);
-                result.setList0(list);
-            }
-            if (i == 1) {
-                queryWrapper1 = queryWrapper;
-                queryWrapper1.orderByAsc(Ticket::getShowtime);
+        List<Ticket> list = ticketService.list(queryWrapper);
+        result.setList0(list);
 
-                List<Ticket> list = ticketService.list(queryWrapper1);
-                result.setList1(list);
 
-            }
-            if (i == 2) {
-                queryWrapper1 = queryWrapper;
-                queryWrapper1.orderByAsc(Ticket::getCreatetime);
-                List<Ticket> list = ticketService.list(queryWrapper1);
-                result.setList2(list);
-            }
-        }
+        queryWrapper1.orderByDesc(Ticket::getShowtime);
+        List<Ticket> list1 = ticketService.list(queryWrapper1);
+        result.setList1(list1);
+
+        queryWrapper2.orderByDesc(Ticket::getCreatetime);
+        List<Ticket> list2 = ticketService.list(queryWrapper2);
+        result.setList2(list2);
 
         return Result.ok(result);
     }
