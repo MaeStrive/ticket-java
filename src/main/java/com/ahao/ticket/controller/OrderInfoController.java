@@ -45,6 +45,7 @@ public class OrderInfoController {
         Ticket ticket = ticketService.getById(orderDTO.getTicketId());
         String[] priceArr = ticket.getPrice().split(",");
         String[] countArr = ticket.getCount().split(",");
+        int flag = 0;
         for (int i = 0; i < priceArr.length; i++) {
             if (orderDTO.getPrice().equals(new BigDecimal(priceArr[i]))) {
                 if (orderDTO.getAmount() > Integer.parseInt(countArr[i])) {
@@ -52,6 +53,7 @@ public class OrderInfoController {
                 } else {
                     countArr[i] = String.valueOf(Integer.parseInt(countArr[i]) - orderDTO.getAmount());
                 }
+                flag = i;
             }
 
         }
@@ -71,6 +73,7 @@ public class OrderInfoController {
         orderDetail.setAmount(orderDTO.getAmount());
         orderDetail.setTicketId(orderDTO.getTicketId());
         orderDetail.setOrderId(orderInfo.getId());
+        orderDetail.setFlag(flag);
         orderDetailService.save(orderDetail);
         //将票的数量减了
         //更新票的数量
@@ -120,6 +123,23 @@ public class OrderInfoController {
         System.out.println(orderInfo);
         LambdaUpdateWrapper<OrderInfo> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(OrderInfo::getId, orderInfo.getId()).set(OrderInfo::getStatus, orderInfo.getStatus());
+        if ("已退款".equals(orderInfo.getStatus())) {
+            //还票
+            LambdaQueryWrapper<OrderDetail> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(OrderDetail::getOrderId, orderInfo.getId()).last("limit 1");
+            OrderDetail one = orderDetailService.getOne(queryWrapper);
+            Integer ticketId = one.getTicketId();
+            Ticket byId = ticketService.getById(ticketId);
+            LambdaUpdateWrapper<Ticket> updateWrapper1 = new LambdaUpdateWrapper<>();
+            String[] countArr = byId.getCount().split(",");
+            for (int i = 0; i < countArr.length; i++) {
+                if (one.getFlag().equals(i))
+                    countArr[i] = String.valueOf(Integer.parseInt(countArr[i]) + one.getAmount());
+            }
+            String countNew = String.join(",", countArr);
+            updateWrapper1.eq(Ticket::getId, ticketId).set(Ticket::getCount, countNew);
+            ticketService.update();
+        }
         orderInfoService.update(updateWrapper);
         return Result.ok();
     }
